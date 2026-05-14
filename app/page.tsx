@@ -40,22 +40,27 @@ export default function Home() {
               Für Finanzberater, Vermittler & strategische Partner
             </div>
 
-            <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-white md:text-6xl">
-              Prüfen Sie in 60 Sekunden Ihre Partnerqualifikation.
+            <h1 className="max-w-3xl text-[2rem] font-semibold leading-tight tracking-tight text-white md:text-6xl">
+              Finanzberater? Prüfen Sie in 60 Sekunden Ihre Partnerqualifikation.
             </h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-6 text-white/72 md:mt-6 md:text-lg md:leading-8">
-              Erweitern Sie Ihr Leistungsangebot um professionelle Lösungen im
-              Bereich digitaler Vermögenswerte – ohne eigene Krypto-Infrastruktur
-              aufzubauen.
+              Erweitern Sie Ihr Leistungsangebot um professionelle
+              Digital-Asset-Lösungen – ohne eigene Krypto-Infrastruktur, ohne
+              eigene Regulierungskomplexität und ohne Krypto-Hype.
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-white/55 md:hidden">
-              <span>Reguliert</span>
+              <span>Regulatorisch orientiert</span>
               <span>•</span>
-              <span>Persönlich</span>
+              <span>Persönlich begleitet</span>
               <span>•</span>
-              <span>Partnerorientiert</span>
+              <span>Partnerfokussiert</span>
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-xs leading-6 text-white/58 md:hidden">
+              Beantworten Sie wenige Fragen und erfahren Sie, ob Ihr Profil
+              grundsätzlich für eine strategische Partnerprüfung geeignet ist.
             </div>
 
             <div className="mt-8 hidden gap-3 text-sm text-white/72 md:grid md:grid-cols-3">
@@ -66,7 +71,7 @@ export default function Home() {
 
               <div className="brand-card rounded-2xl p-4">
                 <div className="mb-2 h-1 w-8 rounded-full bg-sand" />
-                Professionelle Partnerbetreuung
+                Persönliche Partnerbetreuung
               </div>
 
               <div className="brand-card rounded-2xl p-4">
@@ -78,6 +83,11 @@ export default function Home() {
 
           <QualificationFlow />
         </div>
+
+        <footer className="border-t border-white/10 py-4 text-center text-[11px] leading-5 text-white/38">
+          Regulatorisch orientiert · Persönlich begleitet · Für professionelle
+          Finanzpartner
+        </footer>
       </section>
     </main>
   );

@@ -1,22 +1,35 @@
 import QualificationFlow from "@/components/QualificationFlow";
 
+function TeroxxLogo() {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white">
+        <div className="absolute h-[2px] w-7 rotate-45 rounded-full bg-white" />
+        <div className="absolute h-[2px] w-7 -rotate-45 rounded-full bg-white" />
+        <div className="absolute h-2.5 w-2.5 rounded-full bg-white" />
+      </div>
+      <span className="text-2xl font-semibold tracking-tight text-white">
+        Teroxx
+      </span>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-luxury">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 md:px-8 lg:px-10">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 md:px-8 lg:px-10">
         <header className="flex items-center justify-between">
-          <div className="text-xs font-semibold tracking-[0.22em] text-gold md:text-sm md:tracking-[0.25em]">
-            DIGITAL ASSET BOUTIQUE
-          </div>
+          <TeroxxLogo />
 
-          <div className="hidden rounded-full border border-white/10 px-4 py-2 text-xs text-white/70 md:block">
+          <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/70 md:block">
             Partnerqualifikation
           </div>
         </header>
 
-        <div className="grid flex-1 items-center gap-6 py-6 md:gap-10 md:py-10 lg:grid-cols-[1fr_0.9fr]">
+        <div className="grid flex-1 items-center gap-5 py-5 md:gap-10 md:py-10 lg:grid-cols-[1fr_0.92fr]">
           <div>
-            <div className="mb-4 inline-flex rounded-full border border-gold/30 bg-gold/10 px-3 py-2 text-xs text-gold md:px-4 md:text-sm">
+            <div className="mb-4 inline-flex rounded-full border border-sand/30 bg-sand/10 px-3 py-2 text-xs text-sand md:px-4 md:text-sm">
               Für Finanzberater, Vermittler & strategische Partner
             </div>
 
@@ -30,18 +43,25 @@ export default function Home() {
               aufzubauen.
             </p>
 
-            <div className="mt-4 text-xs font-medium text-white/50 md:hidden">
-              Reguliert. Persönlich. Partnerorientiert.
+            <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-white/55 md:hidden">
+              <span>Reguliert</span>
+              <span>•</span>
+              <span>Persönlich</span>
+              <span>•</span>
+              <span>Partnerorientiert</span>
             </div>
 
-            <div className="mt-8 hidden gap-3 text-sm text-white/72 sm:grid-cols-3 md:grid">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="mt-8 hidden gap-3 text-sm text-white/72 md:grid md:grid-cols-3">
+              <div className="brand-card rounded-2xl p-4">
+                <div className="mb-2 h-1 w-8 rounded-full bg-electric" />
                 Regulatorisch orientierte Infrastruktur
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="brand-card rounded-2xl p-4">
+                <div className="mb-2 h-1 w-8 rounded-full bg-sand" />
                 Professionelle Partnerbetreuung
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="brand-card rounded-2xl p-4">
+                <div className="mb-2 h-1 w-8 rounded-full bg-ember" />
                 Neue Potenziale für Ihr Netzwerk
               </div>
             </div>

@@ -21,14 +21,24 @@ const questions = [
     ]
   },
   {
-    id: "clients",
-    question: "Wie viele Kunden betreuen Sie aktuell ungefähr?",
+    id: "cooperationFreedom",
+    question: "Wie frei können Sie über neue Kooperationen entscheiden?",
     options: [
+      "Ich entscheide selbstständig",
+      "Ich kann Kooperationen anbahnen, muss sie aber intern abstimmen",
+      "Ich bin an Vorgaben meiner Organisation gebunden",
+      "Nicht sicher"
+    ]
+  },
+  {
+    id: "clients",
+    question: "Wie groß ist Ihr aktuell betreutes Kunden- oder Kontaktnetzwerk?",
+    options: [
+      "Im Aufbau",
       "10–100",
       "100–500",
       "500–2.000",
-      "Mehr als 2.000",
-      "Ich baue mein Netzwerk aktuell auf"
+      "Mehr als 2.000"
     ]
   },
   {
@@ -102,26 +112,49 @@ function calculateQualification(answers: Answers): QualificationResult {
     score += 0;
   }
 
-  // Frage 2: Kundenanzahl
+  // Frage 2: Freiheit bei Kooperationen
+  if (answers.cooperationFreedom === "Ich entscheide selbstständig") {
+    score += 3;
+  }
+
+  if (
+    answers.cooperationFreedom ===
+    "Ich kann Kooperationen anbahnen, muss sie aber intern abstimmen"
+  ) {
+    score += 2;
+  }
+
+  if (
+    answers.cooperationFreedom ===
+    "Ich bin an Vorgaben meiner Organisation gebunden"
+  ) {
+    score -= 1;
+  }
+
+  if (answers.cooperationFreedom === "Nicht sicher") {
+    score += 0;
+  }
+
+  // Frage 3: Kunden- oder Kontaktnetzwerk
   if (answers.clients === "Mehr als 2.000") score += 4;
   if (answers.clients === "500–2.000") score += 3;
   if (answers.clients === "100–500") score += 2;
   if (answers.clients === "10–100") score += 1;
-  if (answers.clients === "Ich baue mein Netzwerk aktuell auf") score += 0;
+  if (answers.clients === "Im Aufbau") score += 0;
 
-  // Frage 3: Erlaubnis Finanzanlagenvermittlung
+  // Frage 4: Erlaubnis Finanzanlagenvermittlung
   if (answers.license === "Ja") score += 3;
   if (answers.license === "Nein, aber in Planung") score += 1;
   if (answers.license === "Nicht sicher") score += 0;
   if (answers.license === "Nein") score -= 2;
 
-  // Frage 4: Nachfrage nach digitalen Assets
+  // Frage 5: Nachfrage nach digitalen Assets
   if (answers.demand === "Ja, regelmäßig") score += 3;
   if (answers.demand === "Gelegentlich") score += 2;
   if (answers.demand === "Selten") score += 1;
   if (answers.demand === "Noch nicht, aber ich sehe Potenzial") score += 1;
 
-  // Frage 5: Interesse
+  // Frage 6: Interesse
   if (answers.interest === "Neue Umsatzpotenziale") score += 2;
   if (answers.interest === "Kundenbindung") score += 2;
   if (answers.interest === "Professionelle Digital-Asset-Lösung") score += 2;
@@ -129,8 +162,8 @@ function calculateQualification(answers: Answers): QualificationResult {
   if (answers.interest === "Zugang zu Expertenwissen") score += 1;
   if (answers.interest === "Positionierung im Zukunftsmarkt") score += 2;
 
-  if (score >= 9) return "qualified";
-  if (score >= 5) return "manual";
+  if (score >= 11) return "qualified";
+  if (score >= 6) return "manual";
   return "notQualified";
 }
 

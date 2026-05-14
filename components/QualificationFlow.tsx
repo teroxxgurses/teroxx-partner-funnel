@@ -72,15 +72,17 @@ function calculateQualification(answers: Answers): QualificationResult {
   if (
     answers.partnerType ===
     "Vermögensverwalter / Family Office / Private Banking"
-  )
+  ) {
     score += 4;
+  }
   if (answers.partnerType === "Nebenberuflicher Tippgeber") score += 1;
   if (answers.partnerType === "Sonstiges") score += 0;
   if (
     answers.partnerType ===
     "Gebundener Vermittler, z. B. Allianz, Ergo, R+V"
-  )
+  ) {
     score -= 2;
+  }
 
   // Frage 2: Kundenanzahl
   if (answers.clients === "Mehr als 2.000") score += 4;
@@ -101,9 +103,17 @@ function calculateQualification(answers: Answers): QualificationResult {
   if (answers.demand === "Selten") score += 1;
   if (answers.demand === "Noch nicht, aber ich sehe Potenzial") score += 1;
 
+  // Frage 5: Interesse
+  if (answers.interest === "Neue Umsatzpotenziale") score += 2;
+  if (answers.interest === "Kundenbindung") score += 2;
+  if (answers.interest === "Professionelle Digital-Asset-Lösung") score += 2;
+  if (answers.interest === "Regulatorisch saubere Infrastruktur") score += 2;
+  if (answers.interest === "Zugang zu Expertenwissen") score += 1;
+  if (answers.interest === "Positionierung im Zukunftsmarkt") score += 2;
+
   // Ergebnislogik
-  if (score >= 8) return "qualified";
-  if (score >= 4) return "manual";
+  if (score >= 9) return "qualified";
+  if (score >= 5) return "manual";
   return "notQualified";
 }
 
@@ -133,10 +143,11 @@ function getResultContent(result: QualificationResult) {
 
   return {
     icon: <AlertCircle className="mb-5 h-12 w-12 text-gold" />,
-    label: "Aktuell noch nicht direkt qualifiziert",
-    headline: "Vielen Dank für Ihr Interesse.",
+    label: "Weitere Angaben erforderlich",
+    headline:
+      "Ihre Angaben reichen aktuell noch nicht für eine direkte Partnerprüfung aus.",
     text:
-      "Auf Basis Ihrer Angaben erfüllen Sie aktuell noch nicht die Voraussetzungen für eine direkte Partnerprüfung. Sie können sich jedoch gerne für zukünftige Updates und Informationen eintragen.",
+      "Sie können Ihre Angaben überprüfen oder sich für zukünftige Updates und Informationen eintragen. Je nach Entwicklung Ihres Netzwerks oder Ihrer regulatorischen Voraussetzungen kann eine Partnerschaft zu einem späteren Zeitpunkt interessant werden.",
     button: "Für zukünftige Updates eintragen"
   };
 }
@@ -161,7 +172,10 @@ export default function QualificationFlow() {
   const isQuestionStep = step < questions.length;
 
   const progress = useMemo(() => {
-    return Math.round(((step + 1) / (questions.length + 1)) * 100);
+    return Math.min(
+      100,
+      Math.round(((step + 1) / (questions.length + 1)) * 100)
+    );
   }, [step]);
 
   const chooseAnswer = (questionId: string, value: string) => {
@@ -186,6 +200,19 @@ export default function QualificationFlow() {
     }
 
     setTimeout(() => setStep((prev) => prev + 1), 250);
+  };
+
+  const goBack = () => {
+    if (step > 0) {
+      setStep((prev) => prev - 1);
+      setQualificationResult(null);
+    }
+  };
+
+  const reviewAnswers = () => {
+    setStep(0);
+    setQualificationResult(null);
+    setSubmitted(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -231,6 +258,7 @@ export default function QualificationFlow() {
           <span>Partnerqualifikation</span>
           <span>{progress}%</span>
         </div>
+
         <div className="h-2 overflow-hidden rounded-full bg-white/10">
           <div
             className="h-full rounded-full bg-gold transition-all duration-500"
@@ -267,12 +295,26 @@ export default function QualificationFlow() {
                   key={option}
                   type="button"
                   onClick={() => chooseAnswer(questions[step].id, option)}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left text-sm text-white/85 transition hover:border-gold/50 hover:bg-gold/10"
+                  className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
+                    answers[questions[step].id] === option
+                      ? "border-gold/70 bg-gold/10 text-gold"
+                      : "border-white/10 bg-white/[0.04] text-white/85 hover:border-gold/50 hover:bg-gold/10"
+                  }`}
                 >
                   {option}
                 </button>
               ))}
             </div>
+
+            {step > 0 && (
+              <button
+                type="button"
+                onClick={goBack}
+                className="mt-5 text-sm text-white/50 transition hover:text-gold"
+              >
+                Zurück
+              </button>
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -295,6 +337,26 @@ export default function QualificationFlow() {
             <p className="mt-3 text-sm leading-6 text-white/65">
               {resultContent?.text}
             </p>
+
+            {qualificationResult === "notQualified" && (
+              <button
+                type="button"
+                onClick={reviewAnswers}
+                className="mt-5 rounded-2xl border border-gold/40 px-5 py-3 text-sm font-semibold text-gold transition hover:bg-gold/10"
+              >
+                Angaben überprüfen
+              </button>
+            )}
+
+            {qualificationResult !== "notQualified" && (
+              <button
+                type="button"
+                onClick={goBack}
+                className="mt-5 text-sm text-white/50 transition hover:text-gold"
+              >
+                Zurück zu den Angaben
+              </button>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-6 grid gap-3">
               <div className="grid gap-3 sm:grid-cols-2">
@@ -341,7 +403,11 @@ export default function QualificationFlow() {
 
               <input
                 required={qualificationResult !== "notQualified"}
-                placeholder="Telefonnummer"
+                placeholder={
+                  qualificationResult === "notQualified"
+                    ? "Telefonnummer optional"
+                    : "Telefonnummer"
+                }
                 value={contact.phone}
                 onChange={(e) =>
                   setContact({ ...contact, phone: e.target.value })

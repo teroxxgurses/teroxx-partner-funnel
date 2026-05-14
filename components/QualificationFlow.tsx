@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, Clock3 } from "lucide-react";
 
 type Answers = Record<string, string>;
+type QualificationResult = "qualified" | "manual" | "notQualified";
 
 const questions = [
   {
@@ -61,10 +62,92 @@ const questions = [
   }
 ];
 
+function calculateQualification(answers: Answers): QualificationResult {
+  let score = 0;
+
+  // Frage 1: Partnerart
+  if (answers.partnerType === "Freier Finanzmakler") score += 3;
+  if (answers.partnerType === "Vermögensberater") score += 3;
+  if (answers.partnerType === "Handelsvertreter nach §84 HGB") score += 2;
+  if (
+    answers.partnerType ===
+    "Vermögensverwalter / Family Office / Private Banking"
+  )
+    score += 4;
+  if (answers.partnerType === "Nebenberuflicher Tippgeber") score += 1;
+  if (answers.partnerType === "Sonstiges") score += 0;
+  if (
+    answers.partnerType ===
+    "Gebundener Vermittler, z. B. Allianz, Ergo, R+V"
+  )
+    score -= 2;
+
+  // Frage 2: Kundenanzahl
+  if (answers.clients === "Mehr als 2.000") score += 4;
+  if (answers.clients === "500–2.000") score += 3;
+  if (answers.clients === "100–500") score += 2;
+  if (answers.clients === "10–100") score += 1;
+  if (answers.clients === "Ich baue mein Netzwerk aktuell auf") score += 0;
+
+  // Frage 3: Erlaubnis Finanzanlagenvermittlung
+  if (answers.license === "Ja") score += 3;
+  if (answers.license === "Nein, aber ich plane es") score += 1;
+  if (answers.license === "Nicht sicher") score += 0;
+  if (answers.license === "Nein") score -= 2;
+
+  // Frage 4: Nachfrage nach digitalen Assets
+  if (answers.demand === "Ja, regelmäßig") score += 3;
+  if (answers.demand === "Gelegentlich") score += 2;
+  if (answers.demand === "Selten") score += 1;
+  if (answers.demand === "Noch nicht, aber ich sehe Potenzial") score += 1;
+
+  // Ergebnislogik
+  if (score >= 8) return "qualified";
+  if (score >= 4) return "manual";
+  return "notQualified";
+}
+
+function getResultContent(result: QualificationResult) {
+  if (result === "qualified") {
+    return {
+      icon: <CheckCircle2 className="mb-5 h-12 w-12 text-gold" />,
+      label: "Grundsätzlich geeignet",
+      headline:
+        "Herzlichen Glückwunsch – Sie erfüllen grundsätzlich die Voraussetzungen für eine Partnerprüfung.",
+      text:
+        "Auf Basis Ihrer Angaben könnten Sie für eine Zusammenarbeit mit unserer Digital Asset Boutique geeignet sein. Im nächsten Schritt prüfen wir gemeinsam, welches Kooperationsmodell zu Ihrem Profil passt.",
+      button: "Partneranfrage absenden"
+    };
+  }
+
+  if (result === "manual") {
+    return {
+      icon: <Clock3 className="mb-5 h-12 w-12 text-gold" />,
+      label: "Individuelle Prüfung empfohlen",
+      headline: "Vielen Dank – Ihr Profil könnte grundsätzlich interessant sein.",
+      text:
+        "Auf Basis Ihrer Angaben empfehlen wir eine individuelle Prüfung. Je nach Netzwerk, Kundengruppe und regulatorischer Ausgangslage könnte ein passendes Kooperationsmodell für Sie infrage kommen.",
+      button: "Anfrage zur individuellen Prüfung absenden"
+    };
+  }
+
+  return {
+    icon: <AlertCircle className="mb-5 h-12 w-12 text-gold" />,
+    label: "Aktuell noch nicht direkt qualifiziert",
+    headline: "Vielen Dank für Ihr Interesse.",
+    text:
+      "Auf Basis Ihrer Angaben erfüllen Sie aktuell noch nicht die Voraussetzungen für eine direkte Partnerprüfung. Sie können sich jedoch gerne für zukünftige Updates und Informationen eintragen.",
+    button: "Für zukünftige Updates eintragen"
+  };
+}
+
 export default function QualificationFlow() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [submitted, setSubmitted] = useState(false);
+  const [qualificationResult, setQualificationResult] =
+    useState<QualificationResult | null>(null);
+
   const [contact, setContact] = useState({
     firstName: "",
     lastName: "",
@@ -82,7 +165,26 @@ export default function QualificationFlow() {
   }, [step]);
 
   const chooseAnswer = (questionId: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+    const updatedAnswers = {
+      ...answers,
+      [questionId]: value
+    };
+
+    setAnswers(updatedAnswers);
+
+    const isLastQuestion = step === questions.length - 1;
+
+    if (isLastQuestion) {
+      const result = calculateQualification(updatedAnswers);
+
+      setTimeout(() => {
+        setQualificationResult(result);
+        setStep((prev) => prev + 1);
+      }, 250);
+
+      return;
+    }
+
     setTimeout(() => setStep((prev) => prev + 1), 250);
   };
 
@@ -95,6 +197,7 @@ export default function QualificationFlow() {
     }
 
     console.log("Lead submitted:", {
+      qualificationResult,
       answers,
       contact
     });
@@ -116,6 +219,10 @@ export default function QualificationFlow() {
       </div>
     );
   }
+
+  const resultContent = qualificationResult
+    ? getResultContent(qualificationResult)
+    : null;
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl backdrop-blur md:p-7">
@@ -175,16 +282,18 @@ export default function QualificationFlow() {
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 0.25 }}
           >
-            <div className="mb-2 text-sm text-gold">Grundsätzlich geeignet</div>
+            {resultContent?.icon}
+
+            <div className="mb-2 text-sm text-gold">
+              {resultContent?.label}
+            </div>
 
             <h2 className="text-2xl font-semibold text-white">
-              Herzlichen Glückwunsch – Sie erfüllen grundsätzlich die
-              Voraussetzungen für eine Partnerprüfung.
+              {resultContent?.headline}
             </h2>
 
             <p className="mt-3 text-sm leading-6 text-white/65">
-              Im nächsten Schritt prüfen wir gemeinsam, welches
-              Kooperationsmodell zu Ihrem Profil passt.
+              {resultContent?.text}
             </p>
 
             <form onSubmit={handleSubmit} className="mt-6 grid gap-3">
@@ -231,7 +340,7 @@ export default function QualificationFlow() {
               />
 
               <input
-                required
+                required={qualificationResult !== "notQualified"}
                 placeholder="Telefonnummer"
                 value={contact.phone}
                 onChange={(e) =>
@@ -268,7 +377,7 @@ export default function QualificationFlow() {
                 type="submit"
                 className="mt-3 rounded-2xl bg-gold px-5 py-4 font-semibold text-navy transition hover:brightness-110"
               >
-                Partneranfrage absenden
+                {resultContent?.button}
               </button>
             </form>
           </motion.div>

@@ -8,8 +8,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        navy: "#050816",
-        gold: "#C8B47A"
+        navy: "#02051A",
+        indigo: "#07143A",
+        electric: "#0EA5C6",
+        sand: "#D8D0BE",
+        ember: "#E46F45",
+        gold: "#D8D0BE"
       }
     }
   },

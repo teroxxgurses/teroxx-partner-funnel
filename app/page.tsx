@@ -2,14 +2,21 @@ import QualificationFlow from "@/components/QualificationFlow";
 
 function TeroxxLogo() {
   return (
-    <div className="flex items-center gap-3">
-      <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white">
-        <div className="absolute h-[2px] w-7 rotate-45 rounded-full bg-white" />
-        <div className="absolute h-[2px] w-7 -rotate-45 rounded-full bg-white" />
-        <div className="absolute h-2.5 w-2.5 rounded-full bg-white" />
+    <div className="flex flex-col">
+      <div className="flex items-center gap-3">
+        <div className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white">
+          <div className="absolute h-[2px] w-7 rotate-45 rounded-full bg-white" />
+          <div className="absolute h-[2px] w-7 -rotate-45 rounded-full bg-white" />
+          <div className="absolute h-2.5 w-2.5 rounded-full bg-white" />
+        </div>
+
+        <span className="text-2xl font-semibold tracking-tight text-white">
+          Teroxx
+        </span>
       </div>
-      <span className="text-2xl font-semibold tracking-tight text-white">
-        Teroxx
+
+      <span className="ml-12 mt-1 text-[10px] font-medium uppercase tracking-[0.28em] text-sand/70">
+        Digital Asset Boutique
       </span>
     </div>
   );
@@ -19,7 +26,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-luxury">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 md:px-8 lg:px-10">
-        <header className="flex items-center justify-between">
+        <header className="flex items-start justify-between">
           <TeroxxLogo />
 
           <div className="hidden rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/70 md:block">
@@ -56,10 +63,12 @@ export default function Home() {
                 <div className="mb-2 h-1 w-8 rounded-full bg-electric" />
                 Regulatorisch orientierte Infrastruktur
               </div>
+
               <div className="brand-card rounded-2xl p-4">
                 <div className="mb-2 h-1 w-8 rounded-full bg-sand" />
                 Professionelle Partnerbetreuung
               </div>
+
               <div className="brand-card rounded-2xl p-4">
                 <div className="mb-2 h-1 w-8 rounded-full bg-ember" />
                 Neue Potenziale für Ihr Netzwerk

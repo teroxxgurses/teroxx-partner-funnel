@@ -65,7 +65,6 @@ const questions = [
 function calculateQualification(answers: Answers): QualificationResult {
   let score = 0;
 
-  // Frage 1: Partnerart
   if (answers.partnerType === "Freier Finanzmakler") score += 3;
   if (answers.partnerType === "Vermögensberater") score += 3;
   if (answers.partnerType === "Handelsvertreter nach §84 HGB") score += 2;
@@ -76,7 +75,6 @@ function calculateQualification(answers: Answers): QualificationResult {
     score += 4;
   }
   if (answers.partnerType === "Nebenberuflicher Tippgeber") score += 1;
-  if (answers.partnerType === "Sonstiges") score += 0;
   if (
     answers.partnerType ===
     "Gebundener Vermittler, z. B. Allianz, Ergo, R+V"
@@ -84,26 +82,20 @@ function calculateQualification(answers: Answers): QualificationResult {
     score -= 2;
   }
 
-  // Frage 2: Kundenanzahl
   if (answers.clients === "Mehr als 2.000") score += 4;
   if (answers.clients === "500–2.000") score += 3;
   if (answers.clients === "100–500") score += 2;
   if (answers.clients === "10–100") score += 1;
-  if (answers.clients === "Ich baue mein Netzwerk aktuell auf") score += 0;
 
-  // Frage 3: Erlaubnis Finanzanlagenvermittlung
   if (answers.license === "Ja") score += 3;
   if (answers.license === "Nein, aber ich plane es") score += 1;
-  if (answers.license === "Nicht sicher") score += 0;
   if (answers.license === "Nein") score -= 2;
 
-  // Frage 4: Nachfrage nach digitalen Assets
   if (answers.demand === "Ja, regelmäßig") score += 3;
   if (answers.demand === "Gelegentlich") score += 2;
   if (answers.demand === "Selten") score += 1;
   if (answers.demand === "Noch nicht, aber ich sehe Potenzial") score += 1;
 
-  // Frage 5: Interesse
   if (answers.interest === "Neue Umsatzpotenziale") score += 2;
   if (answers.interest === "Kundenbindung") score += 2;
   if (answers.interest === "Professionelle Digital-Asset-Lösung") score += 2;
@@ -111,7 +103,6 @@ function calculateQualification(answers: Answers): QualificationResult {
   if (answers.interest === "Zugang zu Expertenwissen") score += 1;
   if (answers.interest === "Positionierung im Zukunftsmarkt") score += 2;
 
-  // Ergebnislogik
   if (score >= 9) return "qualified";
   if (score >= 5) return "manual";
   return "notQualified";
@@ -120,34 +111,35 @@ function calculateQualification(answers: Answers): QualificationResult {
 function getResultContent(result: QualificationResult) {
   if (result === "qualified") {
     return {
-      icon: <CheckCircle2 className="mb-5 h-12 w-12 text-gold" />,
+      icon: <CheckCircle2 className="mb-5 h-12 w-12 text-sand" />,
       label: "Grundsätzlich geeignet",
       headline:
-        "Herzlichen Glückwunsch – Sie erfüllen grundsätzlich die Voraussetzungen für eine Partnerprüfung.",
+        "Herzlichen Glückwunsch – Ihr Profil passt grundsätzlich zu unserer Partnerprüfung.",
       text:
-        "Auf Basis Ihrer Angaben könnten Sie für eine Zusammenarbeit mit unserer Digital Asset Boutique geeignet sein. Im nächsten Schritt prüfen wir gemeinsam, welches Kooperationsmodell zu Ihrem Profil passt.",
+        "Auf Basis Ihrer Angaben könnte eine Zusammenarbeit mit unserer Digital Asset Boutique interessant sein. Im nächsten Schritt prüfen wir gemeinsam, welches Kooperationsmodell zu Ihrem Profil und Netzwerk passt.",
       button: "Partneranfrage absenden"
     };
   }
 
   if (result === "manual") {
     return {
-      icon: <Clock3 className="mb-5 h-12 w-12 text-gold" />,
+      icon: <Clock3 className="mb-5 h-12 w-12 text-sand" />,
       label: "Individuelle Prüfung empfohlen",
-      headline: "Vielen Dank – Ihr Profil könnte grundsätzlich interessant sein.",
+      headline:
+        "Ihr Profil ist interessant – wir empfehlen eine individuelle Prüfung.",
       text:
-        "Auf Basis Ihrer Angaben empfehlen wir eine individuelle Prüfung. Je nach Netzwerk, Kundengruppe und regulatorischer Ausgangslage könnte ein passendes Kooperationsmodell für Sie infrage kommen.",
+        "Ihre Angaben zeigen grundsätzliches Kooperationspotenzial. Je nach Netzwerk, Kundengruppe und regulatorischer Ausgangslage prüfen wir gerne persönlich, welches Partnermodell für Sie infrage kommt.",
       button: "Anfrage zur individuellen Prüfung absenden"
     };
   }
 
   return {
-    icon: <AlertCircle className="mb-5 h-12 w-12 text-gold" />,
+    icon: <AlertCircle className="mb-5 h-12 w-12 text-sand" />,
     label: "Weitere Angaben erforderlich",
     headline:
-      "Ihre Angaben reichen aktuell noch nicht für eine direkte Partnerprüfung aus.",
+      "Aktuell ist eine direkte Partnerprüfung noch nicht eindeutig möglich.",
     text:
-      "Sie können Ihre Angaben überprüfen oder sich für zukünftige Updates und Informationen eintragen. Je nach Entwicklung Ihres Netzwerks oder Ihrer regulatorischen Voraussetzungen kann eine Partnerschaft zu einem späteren Zeitpunkt interessant werden.",
+      "Sie können Ihre Angaben überprüfen oder sich für zukünftige Updates eintragen. Je nach Entwicklung Ihres Netzwerks oder Ihrer regulatorischen Voraussetzungen kann eine Partnerschaft zu einem späteren Zeitpunkt interessant werden.",
     button: "Für zukünftige Updates eintragen"
   };
 }
@@ -194,12 +186,12 @@ export default function QualificationFlow() {
       setTimeout(() => {
         setQualificationResult(result);
         setStep((prev) => prev + 1);
-      }, 250);
+      }, 220);
 
       return;
     }
 
-    setTimeout(() => setStep((prev) => prev + 1), 250);
+    setTimeout(() => setStep((prev) => prev + 1), 220);
   };
 
   const goBack = () => {
@@ -234,8 +226,8 @@ export default function QualificationFlow() {
 
   if (submitted) {
     return (
-      <div className="rounded-3xl border border-gold/25 bg-white/[0.06] p-6 shadow-2xl backdrop-blur md:p-8">
-        <CheckCircle2 className="mb-5 h-12 w-12 text-gold" />
+      <div className="brand-card rounded-3xl p-6 backdrop-blur md:p-8">
+        <CheckCircle2 className="mb-5 h-12 w-12 text-sand" />
         <h2 className="text-2xl font-semibold text-white">
           Vielen Dank für Ihre Anfrage.
         </h2>
@@ -252,8 +244,8 @@ export default function QualificationFlow() {
     : null;
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl backdrop-blur md:p-7">
-      <div className="mb-6">
+    <div className="brand-card rounded-3xl p-5 backdrop-blur md:p-7">
+      <div className="mb-5">
         <div className="mb-3 flex items-center justify-between text-xs text-white/50">
           <span>Partnerqualifikation</span>
           <span>{progress}%</span>
@@ -261,7 +253,7 @@ export default function QualificationFlow() {
 
         <div className="h-2 overflow-hidden rounded-full bg-white/10">
           <div
-            className="h-full rounded-full bg-gold transition-all duration-500"
+            className="h-full rounded-full bg-sand transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -274,9 +266,9 @@ export default function QualificationFlow() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -14 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
           >
-            <div className="mb-2 text-sm text-gold">
+            <div className="mb-2 text-sm text-sand">
               Schritt {step + 1} von {questions.length}
             </div>
 
@@ -285,8 +277,9 @@ export default function QualificationFlow() {
             </h2>
 
             <p className="mt-3 text-sm leading-6 text-white/60">
-              Ihre Angaben helfen uns einzuschätzen, welches Partnermodell zu
-              Ihrem Profil passt.
+              Beantworten Sie wenige Fragen, damit wir einschätzen können, ob
+              eine strategische Partnerschaft grundsätzlich zu Ihrem Profil
+              passt.
             </p>
 
             <div className="mt-6 grid gap-3">
@@ -297,8 +290,8 @@ export default function QualificationFlow() {
                   onClick={() => chooseAnswer(questions[step].id, option)}
                   className={`rounded-2xl border px-4 py-4 text-left text-sm transition ${
                     answers[questions[step].id] === option
-                      ? "border-gold/70 bg-gold/10 text-gold"
-                      : "border-white/10 bg-white/[0.04] text-white/85 hover:border-gold/50 hover:bg-gold/10"
+                      ? "border-sand/70 bg-sand/10 text-sand"
+                      : "border-white/10 bg-white/[0.04] text-white/85 hover:border-sand/50 hover:bg-sand/10"
                   }`}
                 >
                   {option}
@@ -310,7 +303,7 @@ export default function QualificationFlow() {
               <button
                 type="button"
                 onClick={goBack}
-                className="mt-5 text-sm text-white/50 transition hover:text-gold"
+                className="mt-5 text-sm text-white/50 transition hover:text-sand"
               >
                 Zurück
               </button>
@@ -322,11 +315,11 @@ export default function QualificationFlow() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -14 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
           >
             {resultContent?.icon}
 
-            <div className="mb-2 text-sm text-gold">
+            <div className="mb-2 text-sm text-sand">
               {resultContent?.label}
             </div>
 
@@ -338,11 +331,16 @@ export default function QualificationFlow() {
               {resultContent?.text}
             </p>
 
+            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-xs leading-6 text-white/55">
+              Ihre Anfrage wird persönlich geprüft. Eine automatische Freigabe
+              erfolgt nicht.
+            </div>
+
             {qualificationResult === "notQualified" && (
               <button
                 type="button"
                 onClick={reviewAnswers}
-                className="mt-5 rounded-2xl border border-gold/40 px-5 py-3 text-sm font-semibold text-gold transition hover:bg-gold/10"
+                className="mt-5 rounded-2xl border border-sand/40 px-5 py-3 text-sm font-semibold text-sand transition hover:bg-sand/10"
               >
                 Angaben überprüfen
               </button>
@@ -352,7 +350,7 @@ export default function QualificationFlow() {
               <button
                 type="button"
                 onClick={goBack}
-                className="mt-5 text-sm text-white/50 transition hover:text-gold"
+                className="mt-5 text-sm text-white/50 transition hover:text-sand"
               >
                 Zurück zu den Angaben
               </button>
@@ -367,7 +365,7 @@ export default function QualificationFlow() {
                   onChange={(e) =>
                     setContact({ ...contact, firstName: e.target.value })
                   }
-                  className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-gold/60"
+                  className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-sand/60"
                 />
 
                 <input
@@ -377,7 +375,7 @@ export default function QualificationFlow() {
                   onChange={(e) =>
                     setContact({ ...contact, lastName: e.target.value })
                   }
-                  className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-gold/60"
+                  className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-sand/60"
                 />
               </div>
 
@@ -387,7 +385,7 @@ export default function QualificationFlow() {
                 onChange={(e) =>
                   setContact({ ...contact, company: e.target.value })
                 }
-                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-gold/60"
+                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-sand/60"
               />
 
               <input
@@ -398,7 +396,7 @@ export default function QualificationFlow() {
                 onChange={(e) =>
                   setContact({ ...contact, email: e.target.value })
                 }
-                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-gold/60"
+                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-sand/60"
               />
 
               <input
@@ -412,7 +410,7 @@ export default function QualificationFlow() {
                 onChange={(e) =>
                   setContact({ ...contact, phone: e.target.value })
                 }
-                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-gold/60"
+                className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-sand/60"
               />
 
               <textarea
@@ -421,7 +419,7 @@ export default function QualificationFlow() {
                 onChange={(e) =>
                   setContact({ ...contact, message: e.target.value })
                 }
-                className="min-h-24 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-gold/60"
+                className="min-h-24 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-sand/60"
               />
 
               <label className="mt-2 flex gap-3 text-xs leading-5 text-white/60">
@@ -441,7 +439,7 @@ export default function QualificationFlow() {
 
               <button
                 type="submit"
-                className="mt-3 rounded-2xl bg-gold px-5 py-4 font-semibold text-navy transition hover:brightness-110"
+                className="mt-3 rounded-2xl bg-sand px-5 py-4 font-semibold text-navy transition hover:brightness-110"
               >
                 {resultContent?.button}
               </button>

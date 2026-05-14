@@ -10,15 +10,14 @@ type QualificationResult = "qualified" | "manual" | "notQualified";
 const questions = [
   {
     id: "partnerType",
-    question: "Welche Art von Finanzpartner sind Sie?",
+    question: "Wie sind Sie aktuell im Finanzvertrieb positioniert?",
     options: [
-      "Gebundener Vermittler, z. B. Allianz, Ergo, R+V",
-      "Freier Finanzmakler",
-      "Vermögensberater",
-      "Handelsvertreter nach §84 HGB",
-      "Nebenberuflicher Tippgeber",
+      "Freier Finanz- oder Versicherungsmakler",
+      "Ausschließlichkeitsvertreter, z. B. Allianz, Ergo, R+V",
+      "Strukturvertrieb / Vertriebsorganisation, z. B. DVAG, Swiss Life Select, MLP, Telis, TauRes",
       "Vermögensverwalter / Family Office / Private Banking",
-      "Sonstiges"
+      "Tippgeber / Netzwerkpartner ohne eigene Beratungserlaubnis",
+      "Sonstiges / nicht sicher"
     ]
   },
   {
@@ -34,8 +33,9 @@ const questions = [
   },
   {
     id: "license",
-    question: "Dürfen Sie aktuell Finanzanlagen vermitteln?",
-    options: ["Ja", "Nein", "Nein, aber ich plane es", "Nicht sicher"]
+    question:
+      "Verfügen Sie über eine Erlaubnis zur Finanzanlagenvermittlung? (§34f GewO oder vergleichbare Zulassung)",
+    options: ["Ja", "Nein", "Nein, aber in Planung", "Nicht sicher"]
   },
   {
     id: "demand",
@@ -65,37 +65,63 @@ const questions = [
 function calculateQualification(answers: Answers): QualificationResult {
   let score = 0;
 
-  if (answers.partnerType === "Freier Finanzmakler") score += 3;
-  if (answers.partnerType === "Vermögensberater") score += 3;
-  if (answers.partnerType === "Handelsvertreter nach §84 HGB") score += 2;
+  // Frage 1: Positionierung im Finanzvertrieb
+  if (answers.partnerType === "Freier Finanz- oder Versicherungsmakler") {
+    score += 3;
+  }
+
   if (
     answers.partnerType ===
     "Vermögensverwalter / Family Office / Private Banking"
   ) {
     score += 4;
   }
-  if (answers.partnerType === "Nebenberuflicher Tippgeber") score += 1;
+
   if (
     answers.partnerType ===
-    "Gebundener Vermittler, z. B. Allianz, Ergo, R+V"
+    "Strukturvertrieb / Vertriebsorganisation, z. B. DVAG, Swiss Life Select, MLP, Telis, TauRes"
   ) {
-    score -= 2;
+    score += 1;
   }
 
+  if (
+    answers.partnerType ===
+    "Tippgeber / Netzwerkpartner ohne eigene Beratungserlaubnis"
+  ) {
+    score += 1;
+  }
+
+  if (
+    answers.partnerType ===
+    "Ausschließlichkeitsvertreter, z. B. Allianz, Ergo, R+V"
+  ) {
+    score -= 1;
+  }
+
+  if (answers.partnerType === "Sonstiges / nicht sicher") {
+    score += 0;
+  }
+
+  // Frage 2: Kundenanzahl
   if (answers.clients === "Mehr als 2.000") score += 4;
   if (answers.clients === "500–2.000") score += 3;
   if (answers.clients === "100–500") score += 2;
   if (answers.clients === "10–100") score += 1;
+  if (answers.clients === "Ich baue mein Netzwerk aktuell auf") score += 0;
 
+  // Frage 3: Erlaubnis Finanzanlagenvermittlung
   if (answers.license === "Ja") score += 3;
-  if (answers.license === "Nein, aber ich plane es") score += 1;
+  if (answers.license === "Nein, aber in Planung") score += 1;
+  if (answers.license === "Nicht sicher") score += 0;
   if (answers.license === "Nein") score -= 2;
 
+  // Frage 4: Nachfrage nach digitalen Assets
   if (answers.demand === "Ja, regelmäßig") score += 3;
   if (answers.demand === "Gelegentlich") score += 2;
   if (answers.demand === "Selten") score += 1;
   if (answers.demand === "Noch nicht, aber ich sehe Potenzial") score += 1;
 
+  // Frage 5: Interesse
   if (answers.interest === "Neue Umsatzpotenziale") score += 2;
   if (answers.interest === "Kundenbindung") score += 2;
   if (answers.interest === "Professionelle Digital-Asset-Lösung") score += 2;
